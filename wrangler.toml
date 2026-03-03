@@ -1,0 +1,11 @@
+name = "saweria-bridge-ts"
+main = "src/index.ts"
+compatibility_date = "2024-03-01"
+
+[observability]
+enabled = true
+
+# Nanti Developer yang mau make ini HARUS ngisi rahasia mereka dengan command:
+# npx wrangler secret put SAWERIA_SECRET
+# npx wrangler secret put ROBLOX_UNIVERSE_ID
+# npx wrangler secret put ROBLOX_API_KEY
