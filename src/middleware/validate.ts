@@ -46,7 +46,7 @@ export async function validateWebhookPayload(
     if (!isSaweriaWebhook(parsed)) {
         return {
             data: null,
-            error: errorResponse('Field nya kurang — butuh id, type, donator_name, message, amount_raw, cut_raw', 400),
+            error: errorResponse('Field nya kurang — butuh id, type, donator_name, message, amount_raw, dan cut', 400),
         };
     }
 

@@ -19,7 +19,7 @@ export interface SaweriaWebhook {
     id: string;
     type: string;
     amount_raw: number;
-    cut_raw: number;
+    cut: number;
     donator_name: string;
     donator_email: string;
     message: string;
@@ -37,7 +37,7 @@ export function isSaweriaWebhook(data: unknown): data is SaweriaWebhook {
         typeof obj.donator_name === 'string' &&
         typeof obj.message === 'string' &&
         typeof obj.amount_raw === 'number' &&
-        typeof obj.cut_raw === 'number'
+        (typeof obj.cut === 'number' || typeof obj.cut_raw === 'number')
     );
 }
 
