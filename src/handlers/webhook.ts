@@ -1,4 +1,4 @@
-// otak donasi — auth, validasi, sanitasi, kirim ke roblox
+// otak donasi — auth, validasi, sanitasi, simpen ke db, kirim ke roblox
 
 import type { Env } from '../types';
 import { authenticateRequest, validateRequestBasics } from '../middleware/auth';
@@ -6,6 +6,7 @@ import { validateWebhookPayload } from '../middleware/validate';
 import { sanitizeDonationPayload } from '../utils/sanitize';
 import { successResponse, errorResponse } from '../utils/response';
 import { publishToMessagingService } from '../services/roblox';
+import { saveDonation } from '../services/database';
 
 const TOPIC = 'SaweriaDonasi';
 
@@ -31,18 +32,23 @@ export async function handleWebhook(
         return successResponse(`bukan donasi, skip (type: ${data.type})`);
     }
 
-    // 5. bersihin & rakit payload
-    const payload = sanitizeDonationPayload(data.donator_name, data.amount_raw, data.message);
     console.log(`[webhook] donasi masuk: ${data.donator_name} — Rp ${data.amount_raw}`);
 
-    // 6. kirim ke roblox
+    // 5. simpen ke database (duplikat otomatis di-skip)
+    await saveDonation(env, data.id, data.donator_name, data.amount_raw, data.message);
+
+    // 6. bersihin & rakit payload buat roblox
+    const payload = sanitizeDonationPayload(data.donator_name, data.amount_raw, data.message);
+
+    // 7. kirim ke roblox
     const result = await publishToMessagingService(env, TOPIC, payload);
 
     if (!result.ok) {
         console.error(`[webhook] gagal kirim (${result.statusCode}):`, result.errorDetail);
-        return errorResponse('Gagal kirim ke game server', 502);
+        // donasi tetep kesimpen di db walaupun gagal kirim ke roblox
+        return errorResponse('Donasi tersimpan, tapi gagal kirim ke game server', 502);
     }
 
     console.log('[webhook] donasi berhasil diteruskan ✓');
-    return successResponse('Donasi berhasil dikirim ke Roblox');
+    return successResponse('Donasi tersimpan dan dikirim ke Roblox');
 }

@@ -84,7 +84,20 @@ npx wrangler secret put ROBLOX_API_KEY
 # api key roblox (bikin di creator dashboard, jgn lupa on-in akses messaging service)
 ```
 
-### 3. setting dari dalem saweria
+### 3. bikin database buat leaderboard (sekali doang)
+
+```bash
+npx wrangler d1 create saweria-db
+```
+abis lu ketik itu, bakal ada output text `database_id = "uuid-panjang"`.
+**JANGAN COPAS**, biarin aja, di `wrangler.toml` bawaan repo ini udah gua set, kalo ditanya replace bilang Yes aja (biar nimpa punya lu).
+terus jalanin ini biar bikin tabelnya:
+```bash
+npx wrangler d1 execute saweria-db --remote --file=./schema.sql
+```
+kalo udah, deploy ulang `npm run deploy`.
+
+### 4. setting dari dalem saweria
 
 1. login web saweria → masuk menu **Webhook**
 2. nyalain toggle webhook
@@ -92,19 +105,22 @@ npx wrangler secret put ROBLOX_API_KEY
    - contoh: `https://saweria-bridge-ts.username.workers.dev/webhook?secret=sateayam2porsi`
    - ganti `sateayam2porsi` sama password yg lu masukin di step 2
 
-### 4. masukin ke roblox studio
+### 5. masukin ke roblox studio
 
-seret file `SaweriaListener.luau` ke dalem **ServerScriptService**. dah gitu doang, kl ada org gila nyawer, script lu bakal bunyi. lu bebas modif kodenya biar muncul ke gui ato apa kek.
+seret file `SaweriaListener.luau` ke dalem **ServerScriptService**. dah gitu doang, kl ada org gila nyawer, script lu bakal bunyi.
+kalo lu mau bikin leaderboard, buka `LeaderboardFetcher.luau` buat contoh cara nampilin top donatur.
 
 ---
 
 ## 🔗 endpoint (baca pelan pelan)
 
-| method | path | gunanya |
-|--------|------|---------|
-| `POST` | `/webhook` | nerima webhook dari saweria |
-| `GET` | `/health` | cek worker masih napas apa kaga |
-| `GET` | `/` | info doang biar tau lu nyasar kemana |
+| method | path | gunanya | auth? |
+|--------|------|---------|-------|
+| `POST` | `/webhook` | nerima webhook dari saweria + simpen ke db + kirim roblox | ya (query `?secret=`) |
+| `GET`  | `/leaderboard` | ambil top donatur (ranking, nama, total rp) | ngga |
+| `GET`  | `/donations` | ambil histori 20 donasi terbaru | ngga |
+| `GET`  | `/health` | ngecek bot idup ato mati doang | ngga |
+| `GET` | `/` | info doang biar tau lu nyasar kemana | ngga |
 
 selain path diatas? dapet **404**. mau POST ke `/health`? dapet **405**. jadi kaga bisa sembarangan.
 

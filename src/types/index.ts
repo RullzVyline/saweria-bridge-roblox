@@ -2,11 +2,12 @@
 
 // ─── Environment ───────────────────────────────────────────
 
-// secrets yg disimpen di cloudflare
+// secrets + bindings yg disimpen di cloudflare
 export interface Env {
     SAWERIA_SECRET: string;
     ROBLOX_UNIVERSE_ID: string;
     ROBLOX_API_KEY: string;
+    DB: D1Database;
 }
 
 // ─── Saweria Webhook ───────────────────────────────────────
@@ -48,4 +49,24 @@ export interface ApiResponse<T = unknown> {
     message: string;
     data?: T;
     error?: string;
+}
+
+// ─── Database ──────────────────────────────────────────────
+
+// row donasi di database
+export interface DonationRow {
+    id: number;
+    saweria_id: string;
+    donator_name: string;
+    amount: number;
+    message: string;
+    created_at: string;
+}
+
+// entry leaderboard (total donasi per orang)
+export interface LeaderboardEntry {
+    rank: number;
+    donator_name: string;
+    total_amount: number;
+    donation_count: number;
 }

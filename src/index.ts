@@ -3,6 +3,7 @@
 import type { Env } from './types';
 import { handleWebhook } from './handlers/webhook';
 import { handleHealth } from './handlers/health';
+import { handleLeaderboard, handleDonations } from './handlers/leaderboard';
 import { errorResponse, corsResponse } from './utils/response';
 
 export default {
@@ -17,8 +18,12 @@ export default {
 
         if (pathname === '/webhook' && method === 'POST') return handleWebhook(request, env, url);
 
+        // public — ga perlu auth
+        if (pathname === '/leaderboard' && method === 'GET') return handleLeaderboard(env, url);
+        if (pathname === '/donations' && method === 'GET') return handleDonations(env, url);
+
         if (pathname === '/' && method === 'GET') {
-            return errorResponse('Saweria Bridge — POST /webhook buat nerima donasi', 200);
+            return errorResponse('Saweria Bridge — POST /webhook buat donasi, GET /leaderboard buat ranking', 200);
         }
 
         if (pathname === '/webhook' && method !== 'POST') {
