@@ -90,20 +90,20 @@ local function subscribe()
 		end)
 
 		if ok then
-			print("[SaweriaBridge] ✅ nyala, dengerin topic: " .. TOPIC)
+			print("[SaweriaBridge] nyala, dengerin topic: " .. TOPIC)
 			return true
 		end
 
 		attempt += 1
 		local delay = BASE_DELAY * (2 ^ (attempt - 1))
 		warn(string.format(
-			"[SaweriaBridge] ❌ gagal subscribe (%d/%d): %s — coba lagi %ds...",
+			"[SaweriaBridge] gagal subscribe (%d/%d): %s — coba lagi %ds...",
 			attempt, MAX_RETRIES, tostring(err), delay
 		))
 		task.wait(delay)
 	end
 
-	warn("[SaweriaBridge] ⛔ nyerah, semua retry gagal. listener MATI!")
+	warn("[SaweriaBridge] semua retry gagal. listener MATI!")
 	return false
 end
 
